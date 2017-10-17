@@ -1,0 +1,1 @@
+Gocery store is a database course minor project, created under the supervision of Dr. Aruna Tiwari. It is an online store for buying groceries.
