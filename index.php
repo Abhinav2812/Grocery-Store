@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <?php include 'reqs.php'?>
+    <?php include 'reqs.php';?>
     <title>Grocery Store</title>
 </head>
 <body>

@@ -115,6 +115,10 @@
                     mysqli_query($conn,$query);
                     $return = $_SESSION['ploc'];
                     $_SESSION['username'] = $username;
+                    $_SESSION['first_name'] = $first_name;
+                    $_SESSION['last_name'] = $last_name;
+                    $_SESSION['email'] = $email;
+                    $_SESSION['mobile'] = $mobile_no;
                     echo "<script>window.location = '$return';</script>";
                 }
                 else if($_POST["act"] == "login")
@@ -131,7 +135,7 @@
                             echo "<script>alert('Password cannot be left empty!')</script>";
                             die();
                     }
-                    $check = "SELECT password from USER where user_id='$username' LIMIT 1";
+                    $check = "SELECT * from USER where user_id='$username' LIMIT 1";
                     $out = mysqli_query($conn,$check);
                     if(mysqli_num_rows($out) == 0)
                     {
@@ -147,6 +151,10 @@
                     }
                     $return = $_SESSION['ploc'];
                     $_SESSION['username'] = $username;
+                    $_SESSION['first_name'] = $out['first_name'];
+                    $_SESSION['last_name'] = $out['last_name'];
+                    $_SESSION['email'] = $out['email_id'];
+                    $_SESSION['mobile'] = $out['mobile_no'];
                     echo "<script>window.location = '$return';</script>";
                 }
             }

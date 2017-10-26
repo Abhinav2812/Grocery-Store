@@ -17,4 +17,13 @@ CREATE TABLE USER
     mobile_no varchar(20)
 );
 
-
+CREATE TABLE ADDRESS(
+    Address_id INT PRIMARY KEY AUTO_INCREMENT,
+    Address_1 varchar(100) NOT NULL,
+    Address_2 varchar(100),
+    zip_code SMALLINT(6) NOT NULL,
+    city varchar(100) NOT NULL,
+    state varchar(100) NOT NULL,
+    user_id varchar(100) NOT NULL,
+    FOREIGN KEY (User_id) REFERENCES USER(User_id)
+);
