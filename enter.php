@@ -2,7 +2,6 @@
     <head>
        <?php include 'reqs.php';?>
        <link rel="stylesheet" href="form.css">
-        <script src="form.js"></script>
         <title>Grocery Store</title>
     </head>
     <body>
@@ -161,3 +160,4 @@
         ?>
     </body>
 </html>
+<script src="form.js"></script>

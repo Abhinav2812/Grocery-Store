@@ -36,6 +36,9 @@
             </form>
              <ul class="nav navbar-nav navbar-right">
                 <li>
+                    <a href="cart.php"><span class="glyphicon glyphicon-shopping-cart"></span> View Cart</a>
+                </li>
+                <li>
                     <a href=<?php
                         if(isset($_SESSION["username"]))
                         {

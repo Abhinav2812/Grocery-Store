@@ -51,3 +51,14 @@ CREATE TABLE PRODUCT(
     FOREIGN KEY (Category_id) REFERENCES CATEGORY(Category_id),
     FOREIGN KEY (Manufacturer_id) REFERENCES MANUFACTURER(Manufacturer_id)
 );
+CREATE TABLE CART(
+    user_id varchar(20) NOT NULL,
+    Product_id INT NOT NULL,
+    QUANTITY INT DEFAULT 1 NOT NULL,
+    FOREIGN KEY (user_id) REFERENCES USER(user_id),
+    FOREIGN KEY (Product_id) REFERENCES PRODUCT(Product_id),
+    UNIQUE( `user_id`, `Product_id`)
+);
+
+#insertions
+INSERT INTO `MANUFACTURER`(`Manufacturer_Name`) VALUES ('Patanjali'),('Ayur'),('Head & Shoulder'),('Himalaya'),('Park Avenue'),('Amway'),('Haldiram'),('Dettol'),('Savlon'),('Lux'),('Pears'),('Dove'),('Khadi'),('Lifebuoy'),('Pantene'),('Aakash'),('Cadbury'),('Ferrero'),('Gits'),('Roopji'),('MTR'),('Chings'),('Knorr'),('Sunfeast');
