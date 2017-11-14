@@ -1,0 +1,49 @@
+1) User
+{Email_id} -> {User_id,Password,First_Name,Last_Name,Mobile_no}
+{User_id} -> {Email_id,Password,First_Name,Last_Name,Mobile_no}
+Candidate Keys -> User_id,Email_id
+Primary Key -> User_id
+BCNF
+
+2) Address
+{Address_id} -> {Address_1,Address_2,Zip Code, City, State, User_id}
+{Zip Code} -> {City, State}	
+Candidate Key/Primary Key -> Address_id
+2NF
+
+3) Product
+{Product_id} -> {Product_Name,Units,Picture,Weight,Category_id,Price,Product_description,Manufacturer_id}
+Candidate Key/Primary Key-> Product_id
+BCNF
+
+4) Category
+{Category_id} -> {Category_Name, Category_Description}
+{Category_Name} -> {Category_id, Category_Description}
+Candidate Keys -> Category_id, Category_Name
+Primary Key -> Category_id
+BCNF
+
+5) Manufacturer
+{Manufacturer_id} -> {Manufacturer_Name}
+{Manufacturer_Name} -> {Manufacturer_id}
+Candidate Keys -> Manufacturer_id, Manufacturer_name
+Primary Key -> Manufacturer_id
+BCNF
+
+6) G_Order
+{Order_id} -> {Payment_Method,Order_time,Billing_id,Amount,Shipping_id,Address_id,User_id}
+{Billing_id} -> {Order_id,Payment_Method,Order_time,Amount,Shipping_id,Address_id,User_id}
+{Shipping_id} -> {Order_id,Payment_Method,Order_time,Billing_id,Amount,Address_id,User_id}
+Candidate Keys -> Order_id, Billing_id, Shipping_id
+Primary Key -> Order_id
+BCNF
+
+7) Cart
+{User_id,Product_id} -> {Quantity}
+Candidate Key/Primary Key -> {User_id,Product_id}
+BCNF
+
+8) Product_Order
+{Product_id,Order_id} -> {Quantity,Price}
+Candidate Key/Primary Key -> {Product_id,Order_id}
+BCNF
