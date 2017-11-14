@@ -75,8 +75,40 @@
                         ";
                         $cnt = $cnt + 1;
                     }
-                    echo "</table>";
                 }
+            }
+            else if($_POST["type"] == "seladdress")
+            {
+                $username = $_SESSION['username'];
+                echo "<h3>My Addresses</h3>";
+                $query = "SELECT * FROM ADDRESS WHERE user_id = '$username'";
+                $out = mysqli_query($conn,$query);
+                if(!($out))
+                    echo "<p>You haven't added an address yet</p>";
+                else
+                {
+                    $cnt = 1;
+                    while($row = mysqli_fetch_array($out))
+                    {
+                        echo "
+                            <div class='panel panel-primary' style='cursor:pointer;' id = 'add$cnt' onclick='setadd($cnt,".$row['Address_id'].");'>
+                                <div class='panel-heading'>
+                                    <h3 class='panel-title'>Address $cnt</h3>
+                                </div></a>
+                                    <div class='panel-body'>
+                                        <p>".$row['Address_1']."</p>
+                                <p>".$row['Address_2']."<p>".$row['city']."</p> <p>".$row['state']."</p> <p> Pin Code - ".$row['zip_code']."</p>
+                                </div>
+                            </div>
+                        ";
+                        $cnt = $cnt + 1;
+                    }
+                }
+            }
+            else if($_POST["type"] == "setaddid")
+            {
+                $_SESSION['addid'] = $_POST['aid'];
+                echo $_POST['aid'];
             }
             else if($_POST["type"] == "add-address")
             {
@@ -161,6 +193,13 @@
             }
             else if($_POST["type"] == "addtocart")
             {
+                if(!isset($_SESSION['username']))
+                {
+                    $myobj = new stdClass();
+                    $myobj->err = "Login first";
+                    echo json_encode($myobj);
+                    die();
+                }
                 $username = $_SESSION['username'];
                 $query1 = "Select Units FROM PRODUCT WHERE Product_id=".$_POST['product_id'].";";
                 $out1 = mysqli_query($conn,$query1);
@@ -251,6 +290,156 @@
                     die();
                 }
                 echo "{}";
+            }
+            else if($_POST["type"] == "vieworder")
+            {
+                $username = $_SESSION['username'];
+                $query = "SELECT PRODUCT.Product_id, Product_name, Quantity, Manufacturer_name,Picture,Price,Product_description FROM CART, PRODUCT, MANUFACTURER WHERE CART.Product_id = PRODUCT.Product_id AND PRODUCT.Manufacturer_id = MANUFACTURER.Manufacturer_id AND user_id = '$username' ORDER BY Product_name;";
+                $out = mysqli_query($conn,$query);
+                if((!$out) || $out->num_rows == 0)
+                    echo "<p>No items in Cart</p>";
+                else
+                {
+                    while($row = mysqli_fetch_array($out))
+                    {
+                        $sum = 0.0;
+                        echo "
+                            <tr id='tr".$row['Product_id']."'>
+                                <td data-th='Product' >
+                                    <div class='row'>
+                                        <div class='col-sm-2 hidden-xs'><img src='images/".$row['Picture']."' class='img-responsive'/></div>
+                                        <div class='col-sm-10'>
+                                            <h4 class='nomargin'>".$row['Product_name']." (".$row['Manufacturer_name'].")</h4>
+                                            <p>".$row['Product_description']."</p>
+                                        </div>
+                                    </div>
+                                </td>
+                                <td data-th='Price' id='price".$row['Product_id']."'>₹".$row['Price']."</td>
+                                <td data-th='Quantity'>
+                                    <p id='qty".$row['Product_id']."'>".$row['Quantity']."</p>
+                                </td>
+                                <td data-th='Subtotal' class='text-center subtotal' id='sub".$row['Product_id']."'>₹".($row['Price']*$row['Quantity'])."</td>
+                            </tr>
+                        ";
+                    }
+                }
+            }
+            else if($_POST["type"] == "addcnt")
+            {
+                $myobj = new stdClass();
+                $query = "SELECT COUNT(*) AS cnt FROM ADDRESS WHERE user_id = '".$_SESSION['username']."';";
+                $out = mysqli_fetch_array(mysqli_query($conn,$query));
+                $myobj->cnt = $out['cnt'];
+                echo json_encode($myobj);
+                die();
+            }
+            else if($_POST["type"] == "orderdone")
+            {
+                $myobj = new stdClass();
+                $query = "CALL PLACEORDER('".$_SESSION['username']."','".$_POST['paymode']."',".$_SESSION['addid'].");";
+                $out = mysqli_query($conn,$query);
+                if(!($out))
+                {
+                    $myobj->err = mysqli_error($conn);
+                }
+                echo json_encode($myobj);
+                die();
+            }
+            else if($_POST["type"] == "checkcartempty")
+            {
+                $myobj = new stdClass();
+                $query = "SELECT COUNT(*) AS cnt FROM CART WHERE user_id = '".$_SESSION['username']."';";
+                $out = mysqli_fetch_array(mysqli_query($conn,$query));
+                $myobj->cnt = $out['cnt'];
+                echo json_encode($myobj);
+                die();
+            }
+            else if($_POST["type"] == "myorder")
+            {
+                $username = $_SESSION['username'];
+                $query = "SELECT * FROM G_ORDER WHERE user_id = '$username';";
+                $out = mysqli_query($conn,$query);
+                if((!$out) || $out->num_rows == 0)
+                    echo "<p>No Orders yet</p>";
+                else
+                {
+                    $cnt = 1;
+                    while($row = mysqli_fetch_array($out))
+                    {
+                        echo "<h3>Order #$cnt</h3>";
+                        echo "<p>Order time: ".$row['Order_time']."</p>";
+                        echo "<p>Payment Method: ".$row['Payment_Method']."</p>";
+                        echo "<p>Billing Id: ".$row['Billing_id']."</p>";
+                        echo "<p>Shipping Id: ".$row['Shipping_id']."</p>";
+                        echo "<h4>Delivery Address:-</h4>";
+                        $query = "SELECT * FROM ADDRESS WHERE Address_id = '".$row['Address_id']."'";
+                        $out2 = mysqli_fetch_assoc(mysqli_query($conn,$query));
+                        echo "<p>".$out2['Address_1'].", ".$out2['Address_2']."</p>";
+                        echo "<p>".$out2['city'].", ".$out2['state'].", Pin Code: ".$out2['zip_code']."</p>";
+                        echo "  <table id='cart' class='table table-hover table-condensed'>
+                                <thead>
+                                    <tr>
+                                        <th style='width:50%' align=middle>Product</th>
+                                        <th style='width:10%' align=middle>Price</th>
+                                        <th style='width:8%' align=middle>Quantity</th>
+                                        <th style='width:22%' class='text-center'>Subtotal</th>
+                                    </tr>
+                                </thead>
+                                <tbody id='items'>";
+                        $query = "SELECT * FROM PRODUCT JOIN PRODUCT_ORDER ON PRODUCT.Product_id = PRODUCT_ORDER.Product_id JOIN MANUFACTURER ON MANUFACTURER.Manufacturer_id = PRODUCT.Manufacturer_id WHERE PRODUCT_ORDER.Order_id = ".$row['Order_id'].";";
+                        $out2 = mysqli_query($conn,$query);
+                        while($row2 = mysqli_fetch_array($out2))
+                        {
+                            $sum = 0.0;
+                            echo "
+                                <tr id='tr".$row2['Product_id']."'>
+                                    <td data-th='Product' >
+                                        <div class='row'>
+                                            <div class='col-sm-2 hidden-xs'><img src='images/".$row2['Picture']."' class='img-responsive'/></div>
+                                            <div class='col-sm-10'>
+                                                <h4 class='nomargin'>".$row2['Product_name']." (".$row2['Manufacturer_Name'].")</h4>
+                                                <p>".$row2['Product_description']."</p>
+                                            </div>
+                                        </div>
+                                    </td>
+                                    <td data-th='Price' id='price".$row2['Product_id']."'>₹".$row2['Price']."</td>
+                                    <td data-th='Quantity'>
+                                        <p id='qty".$row2['Product_id']."'>".$row2['Quantity']."</p>
+                                    </td>
+                                    <td data-th='Subtotal' class='text-center subtotal' id='sub".$row2['Product_id']."'>₹".($row2['Price']*$row2['Quantity'])."</td>
+                                </tr>
+                            ";
+                        }            
+                        echo   "</tbody>
+                                <tfoot>
+                                    <tr>
+                                        <td colspan='3' class='hidden-xs'></td>
+                                        <td class='hidden-xs text-center' id='total$cnt'><strong>Total ₹".$row['Amount']."</strong></td>
+                                    </tr>
+                                </tfoot>
+                            </table>";
+                        // echo "
+                        //     <tr id='tr".$row['Product_id']."'>
+                        //         <td data-th='Product' >
+                        //             <div class='row'>
+                        //                 <div class='col-sm-2 hidden-xs'><img src='images/".$row['Picture']."' class='img-responsive'/></div>
+                        //                 <div class='col-sm-10'>
+                        //                     <h4 class='nomargin'>".$row['Product_name']." (".$row['Manufacturer_name'].")</h4>
+                        //                     <p>".$row['Product_description']."</p>
+                        //                 </div>
+                        //             </div>
+                        //         </td>
+                        //         <td data-th='Price' id='price".$row['Product_id']."'>₹".$row['Price']."</td>
+                        //         <td data-th='Quantity'>
+                        //             <p id='qty".$row['Product_id']."'>".$row['Quantity']."</p>
+                        //         </td>
+                        //         <td data-th='Subtotal' class='text-center subtotal' id='sub".$row['Product_id']."'>₹".($row['Price']*$row['Quantity'])."</td>
+                        //     </tr>
+                        // ";
+                        echo "<br><hr/>";
+                        $cnt++;
+                    }
+                }
             }
         }
 ?>

@@ -53,7 +53,7 @@
         success: function(data) { 
             obj = JSON.parse(data);
             if('err' in obj)
-                $.toaster(obj['err'],itemname,'warning');
+                $.toaster(obj['err'],'Error','warning');
             else
                 $.toaster('Added to cart',itemname,'info');                   
         }

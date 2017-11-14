@@ -3,6 +3,7 @@
        <?php include 'reqs.php';?>
        <link rel="stylesheet" href="form.css">
         <title>Grocery Store</title>
+        <script src="form.js"></script>
     </head>
     <body>
           <?php
@@ -111,7 +112,12 @@
                         die();
                     }
                     $query = "INSERT INTO USER VALUES('$username','$email','$password','$first_name','$last_name','$mobile_no')";
-                    mysqli_query($conn,$query);
+                    $out = mysqli_query($conn,$query);
+                    if(!$out)
+                    {
+                        echo "<script>alert('$conn->error')</script>";
+                        die();
+                    }
                     $return = $_SESSION['ploc'];
                     $_SESSION['username'] = $username;
                     $_SESSION['first_name'] = $first_name;
@@ -160,4 +166,3 @@
         ?>
     </body>
 </html>
-<script src="form.js"></script>

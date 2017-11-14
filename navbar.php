@@ -14,7 +14,7 @@
         <!-- Items -->
         <div class="collapse navbar-collapse" id="topNavBar">
             <ul class="nav navbar-nav">
-                <li class=""><a href="browse.php"><span class="glyphicon glyphicon-cutlery" aria-hidden="true"></span>&nbsp; Browse</a></li>
+                <li class=""><a href="myorder.php"><span class="glyphicon glyphicon-cutlery" aria-hidden="true"></span>&nbsp; My Orders</a></li>
                 <li class=""><a href="account.php"><span class="glyphicon glyphicon-user" aria-hidden="true"></span>&nbsp; 
                 <?php
                     if(isset($_SESSION["username"]))

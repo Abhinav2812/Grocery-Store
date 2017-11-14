@@ -64,7 +64,7 @@
                 $("#addsuccess").hide();        
                 if(!$.trim(data))
                 {   
-                    $("#addsuccess").show();u
+                    $("#addsuccess").show();
                     $.ajax({
                         type: "POST",
                         url: "data.php",

@@ -32,7 +32,7 @@
                                     <td><a href="index.php" class="btn btn-warning"><i class="fa fa-angle-left"></i> Continue Shopping</a></td>
                                     <td colspan="2" class="hidden-xs"></td>
                                     <td class="hidden-xs text-center" id="total"></td>
-                                    <td><a href="#" class="btn btn-success btn-block">Checkout <i class="fa fa-angle-right"></i></a></td>
+                                    <td><a href="placeorder.php" class="btn btn-success btn-block" onclick = "return verifyAddress();">Checkout <i class="fa fa-angle-right"></i></a></td>
                                 </tr>
                             </tfoot>
                         </table>
@@ -41,6 +41,31 @@
 </body>
 </html>
 <script>
+    function verifyAddress()
+    {
+        $.ajax({
+            type: "POST",
+            url: "data.php",
+            data: {
+                type: "addcnt",
+            },        
+            cache: false,               
+            success: function(data) {  
+                console.log(data);                  
+                obj = JSON.parse(data);
+                if(obj['cnt'] == 0)
+                {
+                    $.toaster('Please add address in account page before checking out','Info','info');
+                    $val1 = 1;
+                }
+                else
+                {
+                    window.location = "placeorder.php";
+                }
+            }
+        });
+        return false;
+    }
     function updateTotal()
     {
         $sum = 0;
@@ -115,6 +140,7 @@
                 {
                      $.toaster('Removed from cart successfully','Success','info');
                      $remrow.remove();
+                     updateTotal();
                 }
             }
         });
